@@ -12,12 +12,30 @@ operations = [
     [-1,-1] #arriba-izquierda
 ]
 
+almacen_heuristic = []
+numero_palillos = 0
+numero_palillos_iniciales = 0
+numero_huecos = 7
+
+for fil in range(final_segment.shape[0]):
+    for col in range(final_segment.shape[1]):
+        if final_segment[fil][col] == "x":
+            almacen_heuristic.append([fil,col])
+            numero_palillos += 1
+        if init_segment[fil][col] == "x":
+            numero_palillos_iniciales += 1
+
+if numero_palillos_iniciales != numero_palillos:
+    print("El número de palillos inicial no es igual al número de palillos final.\nNO HAY SOLUCIÓN.\n")
+    exit()
+
 
 class Node:
     def __init__(self, value, parent=None):
         self.value = value
         self.children = []
         self.parent = parent
+        self.heuristic = self.calculate_heuristic() 
 
     def add_child(self, value):
         child = Node(value, parent=self)
@@ -40,6 +58,21 @@ class Node:
                                 if np.array_equal(new_value,final_segment):
                                     return self.children, True                        
         return self.children, False
+    
+    def calculate_heuristic(self): 
+        heuristic = 0
+        for fil in range(self.value.shape[0]): 
+            for col in range(self.value.shape[1]): 
+                if self.value[fil][col] == "x": 
+                    found = False
+                    for h in almacen_heuristic: 
+                        if [fil, col]== h: 
+                            found = True
+                            break
+                    if found:
+                        break
+                    heuristic += 1
+        return heuristic
         
 
 root = Node(init_segment)
