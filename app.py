@@ -31,16 +31,17 @@ if numero_palillos_iniciales != numero_palillos:
 
 
 class Node:
-    def __init__(self, value, parent=None):
+    def __init__(self, value, parent=None, cost=0):
         self.value = value
         self.children = []
         self.parent = parent
+        self.cost = cost
         self.heuristic = self.calculate_heuristic() 
+        self.fx = self.cost + self.heuristic
 
-    def add_child(self, value):
-        child = Node(value, parent=self)
+    def add_child(self, value, cost):
+        child = Node(value, parent=self, cost=cost)
         self.children.append(child)
-        return child
 
     def generate_childs(self):
         num_filas, num_columnas = self.value.shape
@@ -54,7 +55,7 @@ class Node:
                                 new_value = self.value.copy()
                                 new_value[i][j] = " "
                                 new_value[new_i][new_j] = "x"
-                                self.add_child(new_value)
+                                self.add_child(new_value, self.cost + 1)
                                 if np.array_equal(new_value,final_segment):
                                     return self.children, True                        
         return self.children, False
