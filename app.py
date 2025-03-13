@@ -77,25 +77,28 @@ class Node:
         
 
 root = Node(init_segment)
-cola = Queue()
+list = []
 children , finish = root.generate_childs()
 for i in children:
-    cola.put(i)
+    list.append((i.fx, i))
+    list.sort(key=lambda x: x[0])
 
-while not cola.empty() and not finish:
-    nodo_actual = cola.get() 
+while not finish:
+    nodo_actual = list.pop(0)[1]
     nuevos_hijos, finish = nodo_actual.generate_childs()
     
     for hijo in nuevos_hijos:
-        cola.put(hijo)
+        list.append((hijo.fx, hijo))
+        list.sort(key=lambda x: x[0])
 
     if finish:
         break
 
 almacen = []
-aux = list(cola.queue)
-hijo = aux[-1]
-almacen.insert(0,hijo)
+for i in list:
+    if i[1].heuristic == 0:
+        almacen.append(i[1])
+
 while True:
     if hijo.parent == None:
         break
@@ -104,4 +107,5 @@ while True:
 
 for i in almacen:
     print(i.value)
+    print(i.fx)
     print("")
